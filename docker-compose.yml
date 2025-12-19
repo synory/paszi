@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: mvp_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mvp_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build: ./back
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/mvp_db
+      HASH_SCHEME: argon2
+      SECRET_KEY: change_me
+      APP_ENV: docker
+      ARGON2_TIME_COST: 2
+      ARGON2_MEMORY_COST: 102400
+      ARGON2_PARALLELISM: 8
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./front
+    environment:
+      VITE_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
+
