@@ -13,7 +13,6 @@ from fastapi.middleware.cors import CORSMiddleware
 logger = logging.getLogger("app")
 logging.basicConfig(level=logging.INFO)
 
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="MVP Registration")
 

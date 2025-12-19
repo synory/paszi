@@ -19,6 +19,7 @@ services:
     build: ./back
     environment:
       DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/mvp_db
+      ALEMBIC_URL: postgresql+psycopg2://postgres:postgres@db:5432/mvp_db
       HASH_SCHEME: argon2
       SECRET_KEY: change_me
       APP_ENV: docker
